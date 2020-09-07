@@ -36,7 +36,7 @@ def job_wrapper(func: Callable) -> Callable:
 
 
 def message_wrapper(
-    func: Callable[[Update, CallbackContext], Any]
+    func: Callable[[Update, CoreContext], Any]
 ) -> Callable[[Update, CallbackContext], Any]:
     @wraps(func)
     def wrapper(update: Update, context: CallbackContext) -> Any:
