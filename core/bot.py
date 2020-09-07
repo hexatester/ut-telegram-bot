@@ -78,9 +78,27 @@ class UniversitasTerbukaBot(object):
         self.updater.start_polling(clean=True)
 
 
+class Process:
+    def __init__(self, token: str, name: str = ''):
+        self.TOKEN = TOKEN
+        self.NAME = NAME
+        self.defaults = Defaults(parse_mode=ParseMode.HTML,
+                                 disable_web_page_preview=True)
+        self.bot = Bot(self.TOKEN)
+        self.dp = Dispatcher(self.bot)
+
+    def __call__(self, update):
+        return self.process_update(update)
+
+    def process_update(self, update):
+        update = Update.de_json(update, self.bot)
+        self.dp.process_update(update)
+
+
 def get_blueprint(token, name):
     bp = Blueprint('bot', __name__)
-    bot = UniversitasTerbukaBot(token, name)
+    # bot = UniversitasTerbukaBot(token, name)
+    bot = Process(token, name)
 
     @bp.route(f"/{bot.TOKEN}", methods=['POST'])
     def webhook():
