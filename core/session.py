@@ -7,6 +7,7 @@ from telegram.error import (BadRequest, RetryAfter, TimedOut, Unauthorized,
                             NetworkError)
 from telegram.ext import CallbackContext
 from typing import Any, Callable, Optional
+from core.context import CoreContext
 from core.db import get_session
 from core.exceptions import RollbackException
 from core.models import User
@@ -34,7 +35,9 @@ def job_wrapper(func: Callable) -> Callable:
     return wrapper
 
 
-def message_wrapper(func: Callable) -> Callable:
+def message_wrapper(
+    func: Callable[[Update, CallbackContext], Any]
+) -> Callable[[Update, CallbackContext], Any]:
     @wraps(func)
     def wrapper(update: Update, context: CallbackContext) -> Any:
         result = None
@@ -45,7 +48,9 @@ def message_wrapper(func: Callable) -> Callable:
             if user.banned:
                 message.chat.send_message('Anda dibanned!')
                 return result
-            result = func(update, context, session, user)
+            core_context = CoreContext.from_data(update, context, session,
+                                                 user)
+            result = func(update, core_context)
         except RollbackException as e:
             session.rollback()
             update.callback_query.answer(e.message)

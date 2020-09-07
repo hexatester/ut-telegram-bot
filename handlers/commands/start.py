@@ -1,11 +1,18 @@
-from telegram import Update, User
+from sqlalchemy.orm import Session
+from telegram import Update
 from telegram.ext import CallbackContext
-from core.utils import action
+from core.session import message_wrapper
+from core.models import User
 
 
-@action.typing
-def start(update: Update, context: CallbackContext):
-    user: User = update.effective_user
+@message_wrapper
+def start(update: Update,
+          context: CallbackContext,
+          session: Session,
+          user: User = None):
+    if user and not user.started:
+        user.started = True
+        session.commit()
     update.effective_message.reply_text(
         f'Selamat datang {user.full_name}\n\n'
         'Daftar Perintah\n'
