@@ -1,7 +1,8 @@
 from flask import Blueprint, request
 from telegram import Bot, Update, ParseMode
 from telegram.ext import Updater, Dispatcher, Defaults, messagequeue
-# from telegram.utils.request import Request
+from queue import Queue
+from telegram.utils.request import Request
 from config import NAME, TOKEN, PERSISTENCE
 
 
@@ -84,7 +85,9 @@ class Process:
         self.NAME = NAME
         self.defaults = Defaults(parse_mode=ParseMode.HTML,
                                  disable_web_page_preview=True)
-        self.bot = Bot(self.TOKEN)
+        request = Request(con_pool_size=8)
+        self.bot = QueueBot(self.TOKEN, request=request)
+        self.queue = Queue()
         self.dp = Dispatcher(self.bot)
 
     def __call__(self, update):
