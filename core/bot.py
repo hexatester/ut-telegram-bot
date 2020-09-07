@@ -86,7 +86,7 @@ class Process:
         self.defaults = Defaults(parse_mode=ParseMode.HTML,
                                  disable_web_page_preview=True)
         request = Request(con_pool_size=8)
-        self.bot = QueueBot(self.TOKEN, request=request)
+        self.bot = QueueBot(token=self.TOKEN, request=request)
         self.queue = Queue()
         self.dp = Dispatcher(self.bot, self.queue)
 
