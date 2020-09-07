@@ -88,7 +88,7 @@ class Process:
         request = Request(con_pool_size=8)
         self.bot = QueueBot(self.TOKEN, request=request)
         self.queue = Queue()
-        self.dp = Dispatcher(self.bot)
+        self.dp = Dispatcher(self.bot, self.queue)
 
     def __call__(self, update):
         return self.process_update(update)
