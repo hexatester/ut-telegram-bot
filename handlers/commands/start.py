@@ -5,11 +5,12 @@ from core.session import message_wrapper
 
 @message_wrapper
 def start(update: Update, context: CoreContext):
+    user = update.effective_user
     if context.user and not context.user.started:
         context.user.started = True
         context.session.commit()
     update.effective_message.reply_text(
-        f'Selamat datang {context.user.full_name}\n\n'
+        f'Selamat datang {user.full_name}\n\n'
         'Daftar Perintah\n'
         '/start - Memulai bot\n'
         '/baca - Baca buku\n'
