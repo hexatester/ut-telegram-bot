@@ -16,12 +16,30 @@ from handlers.errors import allert_devs
 # https://github.com/Nukesor/ultimate-poll-bot/blob/master/pollbot/telegram/session.py
 
 
+def job_wrapper(func: Callable) -> Callable:
+    @wraps(func)
+    def wrapper(context: CallbackContext) -> Any:
+        result = None
+        try:
+            session = get_session()
+            result = func(context, session)
+        except Exception as e:
+            if not ignore_exception(e):
+                raise e
+        finally:
+            if 'session' in locals():
+                session.close()
+            return result
+
+    return wrapper
+
+
 def message_wrapper(func: Callable) -> Callable:
     @wraps(func)
     def wrapper(update: Update, context: CallbackContext) -> Any:
         result = None
-        session = get_session()
         try:
+            session = get_session()
             message: Message = update.effective_message
             user = get_user(session, message.from_user)
             if user.banned:
