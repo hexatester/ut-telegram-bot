@@ -1,16 +1,17 @@
-"""Initial User
+"""initial user
 
-Revision ID: 788922fba607
+Revision ID: 8df0a9a19a5e
 Revises: 
-Create Date: 2020-09-07 12:21:58.245981
+Create Date: 2020-09-07 19:10:50.297425
 
 """
 from alembic import op
 import sqlalchemy as sa
+import sqlalchemy_utils
 
 
 # revision identifiers, used by Alembic.
-revision = '788922fba607'
+revision = '8df0a9a19a5e'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -23,12 +24,11 @@ def upgrade():
     sa.Column('name', sa.String(), nullable=True),
     sa.Column('username', sa.String(), nullable=True),
     sa.Column('token', sa.String(), nullable=True),
+    sa.Column('data', sqlalchemy_utils.types.json.JSONType(), nullable=True),
     sa.Column('created_at', sa.DateTime(), server_default=sa.text('(CURRENT_TIMESTAMP)'), nullable=False),
     sa.Column('updated_at', sa.DateTime(), server_default=sa.text('(CURRENT_TIMESTAMP)'), nullable=False),
     sa.Column('started', sa.Boolean(), nullable=False),
     sa.Column('banned', sa.Boolean(), nullable=False),
-    sa.Column('broadcast_sent', sa.Boolean(), nullable=False),
-    sa.Column('last_update', sa.DateTime(), nullable=True),
     sa.Column('admin', sa.Boolean(), nullable=False),
     sa.Column('notifications_enabled', sa.Boolean(), nullable=False),
     sa.Column('expected_input', sa.String(), nullable=True),
