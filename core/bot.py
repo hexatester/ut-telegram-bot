@@ -85,10 +85,15 @@ class Process:
         self.NAME = NAME
         self.defaults = Defaults(parse_mode=ParseMode.HTML,
                                  disable_web_page_preview=True)
+        q = messagequeue.MessageQueue(all_burst_limit=3,
+                                      all_time_limit_ms=3000)
         request = Request(con_pool_size=8)
-        self.bot = QueueBot(token=self.TOKEN, request=request)
+        self.bot = QueueBot(mqueue=q,
+                            token=self.TOKEN,
+                            request=request,
+                            defaults=self.defaults)
         self.queue = Queue()
-        self.dp = Dispatcher(self.bot, self.queue)
+        self.dp = Dispatcher(self.bot, self.queue, use_context=True)
 
     def __call__(self, update):
         return self.process_update(update)
